@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<body>
+
+<h1 id="recordingText" style="background-color: red; display: none;">RECORDING</h1>
+  <section id="wrap">
+    <section id="main">
+      <div class="nowplaying"></div>
+      <div class="keys">
+        <div data-frequency="130" data-key="65" class="key" data-note="C">
+            <span class="hints">A</span>
+        </div>
+        <div data-frequency="138" data-key="87" class="key sharp" data-note="C#">
+            <span class="hints">W</span>
+        </div>
+        <div data-frequency="146" data-key="83" class="key" data-note="D">
+            <span class="hints">S</span>
+        </div>
+        <div data-frequency="155" data-key="69" class="key sharp" data-note="D#">
+            <span class="hints">E</span>
+        </div>
+        <div data-frequency="164" data-key="68" class="key" data-note="E">
+            <span class="hints">D</span>
+        </div>
+        <div data-frequency="174" data-key="70" class="key" data-note="F">
+            <span class="hints">F</span>
+        </div>
+        <div data-frequency="184" data-key="84" class="key sharp" data-note="F#">
+            <span class="hints">T</span>
+        </div>
+        <div data-frequency="195" data-key="71" class="key" data-note="G">
+            <span class="hints">G</span>
+        </div>
+        <div data-frequency="207" data-key="89" class="key sharp" data-note="G#">
+            <span class="hints">Y</span>
+        </div>
+        <div data-frequency="220" data-key="72" class="key" data-note="A">
+            <span class="hints">H</span>
+        </div>
+        <div data-frequency="233" data-key="85" class="key sharp" data-note="A#">
+            <span class="hints">U</span>
+        </div>
+        <div data-frequency="246" data-key="74" class="key" data-note="B">
+            <span class="hints">J</span>
+        </div>
+        <div data-frequency="261" data-key="75" class="key" data-note="C">
+            <span class="hints">K</span>
+        </div>
+        <div data-frequency="277" data-key="79" class="key sharp" data-note="C#">
+            <span class="hints">O</span>
+        </div>
+        <div data-frequency="293" data-key="76" class="key" data-note="D">
+            <span class="hints">L</span>
+        </div>
+        <div data-frequency="311" data-key="80" class="key sharp" data-note="D#">
+            <span class="hints">P</span>
+        </div>
+        <div data-frequency="329" data-key="186" class="key" data-note="E">
+            <span class="hints">Ö</span>
+        </div>
+      </div>
+  </section>
+
+  <div class="settingsBar">
+      
+    <div class="right">
+      <span>Select Instrument </span>
+      <select name="instrument">
+        <option value="sine">Sine</option>
+        <option value="square" >Square</option>
+        <option value="triangle">Triangle</option>
+        <option value="kick" selected>Kick</option>
+        <option value="snare">Snare</option>
+        <option value="bass">Bass</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <h2>Audio</h2>
+  <button id="recordBtn"> Record Audio</button>
+  <button id="stopBtn"> Stop Record Audio</button>
+</div>
+
+<div>
+    <h2>MIDI</h2>
+    <button id="recordMidiBtn"> Record MIDI</button>
+    <button id="stopMidiBtn"> Stop Record MIDI</button>
+ 
+  </div>
+
+  <button id="playTracksBtn">Play All Tracks</button>
+  <div id="tracksDiv">
+</div>
+            
+    <script src="script.js"></script>
+</body>
+</html>
