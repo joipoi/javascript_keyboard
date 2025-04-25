@@ -171,14 +171,22 @@ function playInstrument(name, freq, startAt, length) {
 }
 
 document.getElementById("recordBtn").addEventListener("click", () => {
+  if(midiList.length > 0){
+    
   recorder.start();
   recordingText.style.display = "block";
+
+  playAllTracks();
+  let latestNoteEndTime = getSongEnd();
+
+  const timeUntilStop = (latestNoteEndTime) * 1000; // extra buffer
+  setTimeout(() => {
+    recorder.stop();
+    recordingText.style.display = "none";
+  }, timeUntilStop);
+}
 });
 
-document.getElementById("stopBtn").addEventListener("click", () => {
-  recorder.stop();
-  recordingText.style.display = "none";
-});
 
 document.getElementById("recordMidiBtn").addEventListener("click", () => {
   RecordMidi();
@@ -411,4 +419,18 @@ function createNewTrack() {
   // Append to main container
   tracksDiv.appendChild(trackElem);
   mutedTracks.push(false);
+}
+
+function getSongEnd(){
+    // Determine the longest duration from all MIDI tracks
+  let latestNoteEndTime = 0;
+  for (let track of midiList) {
+    for (let note of track) {
+      const noteEnd = note.timestamp + note.length;
+      if (noteEnd > latestNoteEndTime) {
+        latestNoteEndTime = noteEnd;
+      }
+    }
+  } 
+  return latestNoteEndTime;
 }
