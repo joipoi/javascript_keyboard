@@ -182,28 +182,19 @@ document.getElementById("stopBtn").addEventListener("click", () => {
 
 document.getElementById("recordMidiBtn").addEventListener("click", () => {
   RecordMidi();
-  recordingText.style.display = "block";
 });
 
 document.getElementById("stopMidiBtn").addEventListener("click", () => {
   recordingMidi = false;
   midiList.push(midiEvents);
+  console.log(midiList);
   midiEvents = [];
   createNewTrack();
   recordingText.style.display = "none";
 });
 
 document.getElementById("playTracksBtn").addEventListener("click", () => {
-  const trackElems = document.querySelectorAll(".track");
-  for(let i = 0; i < midiList.length; i++){
-    let trackSelect = trackElems[i].querySelector("select");
-    if(!mutedTracks[i]){
-      playMidi(midiList[i], trackSelect.value);
-     
-    }
-    
-  }
-
+  playAllTracks();
 });
 
 setup();
@@ -243,6 +234,17 @@ function setup() {
 }
 
 
+function playAllTracks(){
+  const trackElems = document.querySelectorAll(".track");
+  for(let i = 0; i < midiList.length; i++){
+    let trackSelect = trackElems[i].querySelector("select");
+    if(!mutedTracks[i]){
+      playMidi(midiList[i], trackSelect.value);
+     
+    }
+    
+  }
+}
 
 function playMidiTone(freq, instrument, length = null, startAt = audioContext.currentTime, ) {
   let osc = playInstrument(instrument, freq, startAt, length); 
@@ -253,7 +255,7 @@ function playMidiTone(freq, instrument, length = null, startAt = audioContext.cu
     const now = audioContext.currentTime;
     const delay = (startAt - now) * 1000; // convert to ms
     const duration = length * 1000;
-
+    if(delay > 0){
     // Add "playing" class at the right time
     setTimeout(() => {
       ele.classList.add("playing");
@@ -264,6 +266,7 @@ function playMidiTone(freq, instrument, length = null, startAt = audioContext.cu
       }, duration);
     }, delay);
   }
+  }
   return osc;
 }
 
@@ -273,15 +276,14 @@ function notePressed(target) {
   const dataset = target.dataset;
   const type = instrumentSelect.options[instrumentSelect.selectedIndex].value;
   const frequency = dataset["frequency"];
+  target.classList.add("playing");
 
   if (!dataset["pressed"]) {
-    if (type === "kick" || type === "snare") {
-      playMidiTone(frequency, type);
-    } else {
-      oscList[frequency] = playMidiTone(frequency, type);;
+      const osc = playMidiTone(frequency, type);
+      if(osc && osc != undefined){
+        oscList[frequency] = osc;
+      }
       dataset["pressed"] = "yes";
-    }
-
     if (recordingMidi) {
       noteStartTimes[frequency] = audioContext.currentTime - recordingStartTime;
     }
@@ -292,13 +294,14 @@ function notePressed(target) {
 function noteReleased(target) {
   const dataset = target.dataset;
   const frequency = dataset["frequency"];
+  target.classList.remove("playing");
   if (dataset && dataset["pressed"]) {
     if (oscList[frequency]) {
       oscList[frequency].stop();
       delete oscList[frequency];
-      delete dataset["pressed"];
+      
     }
-    
+    delete dataset["pressed"];
   }
 
   if (recordingMidi && noteStartTimes[frequency] !== undefined) {
@@ -339,9 +342,31 @@ function playMidi(midi, instrument, startTime = audioContext.currentTime) {
 }
 
 function RecordMidi() {
-  recordingStartTime = audioContext.currentTime;
-  recordingMidi = true;
+
+  
+  const countInDisplay = document.getElementById("count-in");
+  const countdownSeconds = 3;
+  let counter = countdownSeconds;
+
+  countInDisplay.textContent = counter;
+
+  const interval = setInterval(() => {
+    counter--;
+    if (counter > 0) {
+      countInDisplay.textContent = counter;
+    } else {
+      clearInterval(interval);
+      playAllTracks();
+      countInDisplay.textContent = "Go!";
+        countInDisplay.textContent = "";
+        recordingStartTime = audioContext.currentTime;
+        recordingMidi = true;
+        recordingText.style.display = "block";
+      
+    }
+  }, 1000);
 }
+
 
 function createNewTrack() {
   const trackElem = document.createElement("div");
