@@ -10,9 +10,6 @@
 
 <h1 id="recordingText" style="background-color: red; display: none;">RECORDING</h1>
 <div id="count-in" style="font-size: 2em; text-align: center;"></div>
-  <section id="wrap">
-    <section id="main">
-      <div class="nowplaying"></div>
       <div class="keys">
         <div data-frequency="130" data-key="65" class="key" data-note="C">
             <span class="hints">A</span>
@@ -64,42 +61,40 @@
         </div>
         <div data-frequency="329" data-key="186" class="key" data-note="E">
             <span class="hints">Ö</span>
-        </div>
       </div>
-  </section>
 
-  <div class="settingsBar">
+    </div>
+  <div id="settingsBar">
       
-    <div class="right">
-      <span>Select Instrument </span>
+    <div>
+      <h2>Select Instrument </h2>
       <select name="instrument">
         <option value="sine">Sine</option>
         <option value="square" >Square</option>
         <option value="triangle">Triangle</option>
         <option value="kick" selected>Kick</option>
         <option value="snare">Snare</option>
-        <option value="bass">Bass</option>
+        <option value="sawtooth">Sawtooth</option>
       </select>
     </div>
-  </div>
-
+ 
+    <div>
+        <h2>MIDI</h2>
+        <button class="settingButton" id="recordMidiBtn"> Record MIDI</button>
+        <button class="settingButton" id="stopMidiBtn"> Stop Record MIDI</button>
+      </div>
   <div>
     <h2>Audio/Playback</h2>
-    <button id="playTracksBtn">Play All Tracks</button>
-  <button id="recordBtn">Play All Tracks And Record Audio</button>
- 
+    <button class="settingButton" id="playTracksBtn">Play All Tracks</button>
+  <button class="settingButton" id="recordBtn">Play All Tracks And Record Audio</button>
 </div>
 
-<div>
-    <h2>MIDI</h2>
-    <button id="recordMidiBtn"> Record MIDI</button>
-    <button id="stopMidiBtn"> Stop Record MIDI</button>
- 
-  </div>
 
 
-  <div id="tracksDiv">
 </div>
+
+<div style="display:none" id="audioDiv"></div>
+  <div id="tracksDiv"></div>
             
     <script src="script.js"></script>
 </body>

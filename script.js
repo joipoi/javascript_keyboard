@@ -93,7 +93,7 @@ const instruments = {
       osc.stop(startAt + 0.2);
     }
   },
-  bass: {
+  sawtooth: {
     holdable: true,
     play: (freq, startAt, length = null) => {
       const osc = audioContext.createOscillator();
@@ -195,7 +195,6 @@ document.getElementById("recordMidiBtn").addEventListener("click", () => {
 document.getElementById("stopMidiBtn").addEventListener("click", () => {
   recordingMidi = false;
   midiList.push(midiEvents);
-  console.log(midiList);
   midiEvents = [];
   createNewTrack();
   recordingText.style.display = "none";
@@ -225,18 +224,21 @@ function setup() {
     const blob = new Blob([event.data], { type: 'audio/webm' });
     const url = URL.createObjectURL(blob);
 
+    const audioDiv = document.getElementById("audioDiv");
+    audioDiv.style.display = "block";
+
     // Create an audio element to play the recording
     const audio = document.createElement('audio');
     audio.controls = true;
     audio.src = url;
-    document.body.appendChild(audio); // Add it to the page
+    audioDiv.appendChild(audio); // Add it to the page
 
     // Optional: still provide a download link
     const a = document.createElement('a');
     a.href = url;
     a.download = 'recording.webm';
     a.textContent = 'Download Recording';
-    document.body.appendChild(a);
+    audioDiv.appendChild(a);
   };
 
 }
@@ -382,28 +384,26 @@ function createNewTrack() {
   trackElem.classList.add("track");
 
   // Track name
-  const nameSpan = document.createElement("span");
+  const nameSpan = document.createElement("p");
   nameSpan.classList.add("name");
+  nameSpan.contentEditable = true;
   nameSpan.textContent = `Untitled${count}`;
   trackElem.appendChild(nameSpan);
-
-  trackElem.appendChild(document.createElement("br"));
 
   // Instrument selector
   const select = instrumentSelect.cloneNode(true);
   select.value = instrumentSelect.value;
 
   trackElem.appendChild(select);
-  trackElem.appendChild(document.createElement("br"));
 
   // Playbutton
-  const playPauseButton = document.createElement("button");
-  playPauseButton.textContent = "Play";
-  playPauseButton.addEventListener("click", () => {
+  const playButton = document.createElement("button");
+  playButton.textContent = "Play";
+  playButton.addEventListener("click", () => {
     playMidi(midiList[count], select.value);
    
   });
-  trackElem.appendChild(playPauseButton);
+  trackElem.appendChild(playButton);
 
   // Mute button
   const muteButton = document.createElement("button");
@@ -411,7 +411,7 @@ function createNewTrack() {
 
   muteButton.addEventListener("click", () => {
     mutedTracks[count] = !mutedTracks[count];
-    mutedTracks[count] ? muteButton.style.backgroundColor = "red" :  muteButton.style.backgroundColor = "white"; 
+    mutedTracks[count] ? muteButton.style.backgroundColor = "red" :  muteButton.style.backgroundColor = "#4CAF50"; 
   });
 
   trackElem.appendChild(muteButton);

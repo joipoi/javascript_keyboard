@@ -6,21 +6,12 @@ html  {
   color: #eee;
 }
 
-.nowplaying {
-font-size: 120px;
-line-height: 1;
-text-shadow: 0 0 5rem #028ae9;
-transition: all .07s ease;
-min-height: 120px;
-}
-
 .keys {
-display: block;
-width: 100%;
+width: 50%;
+float:left;
 height: 350px;
 max-width: 880px;
 position: relative;
-margin: 40px auto 0;
 cursor: none;
 }
 
@@ -100,10 +91,128 @@ opacity: 1;
 }
 
 .track{
-  background-color: grey;
+  background-color: rgba(255, 255, 255, 0.8); 
   width:80%;
   height:80px;
-  border:solid;
+  border:solid rgba(255, 255, 255, 0.8);
   text-align: left;
   margin-bottom: 10px;
+  color: black;
+  font-size: 15px;
+}
+.track button{
+  padding: 5px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-left:4px;
+}
+.track p{
+  margin:2px;
+}
+
+#tracksDiv{
+  width:100%;
+  float:left;
+  margin-top:20px;
+}
+.track select{
+  padding: 3px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+  display:block;
+  margin-bottom:5px;
+}
+
+#settingsBar {
+  background: rgba(255, 255, 255, 0.8); 
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  font-family: Arial, sans-serif;
+  float:left;
+  margin-left:40px;
+  height: 320px;
+  margin-right:200px;
+}
+
+#settingsBar h2 {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #333;
+}
+
+#settingsBar div {
+  margin-bottom: 10px;
+}
+
+#settingsBar select {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #f9f9f9;
+}
+
+.settingButton {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 10px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.settingButton:hover {
+  background: #45a049;
+}
+
+.settingButton:active {
+  background: #3e8e41;
+}
+
+
+#audioDiv {
+  float:left;
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(245, 245, 245, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+#audioDiv audio {
+  width: 100%;
+  margin-bottom: 10px;
+  outline: none;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+#audioDiv a {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #2196F3;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#audioDiv a:hover {
+  background: #1976D2;
 }
