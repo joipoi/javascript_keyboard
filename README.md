@@ -19,7 +19,7 @@ Current instruments: sine, square, triangle, sawtooth, kick, snare
 #  How It Works
 Tracks are stored as an array of "midi events" (midiList) where each track is an array of note objects:
 
-```
+```javascript
 {
   "freq": 130,
   "timestamp": 0.35,
@@ -29,7 +29,7 @@ Tracks are stored as an array of "midi events" (midiList) where each track is an
 These tracks can then be played back at the same time
 
 #  Example Instruments
-```
+```javascript
 bass: {
   holdable: true,
   play: (freq, startAt, length = null) => {
