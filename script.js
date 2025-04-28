@@ -1,5 +1,5 @@
 const audioContext = new AudioContext();
-const oscList = [];
+const oscList = [];   //oscList is currently playing oscillators so we know which ones to stop later
 let mainGainNode = null;
 
 const instrumentSelect = document.querySelector("select[name='instrument']");
@@ -19,12 +19,15 @@ const tracksDiv = document.getElementById("tracksDiv");
 const recordingText = document.getElementById("recordingText");
 
 const synthKeys = document.querySelectorAll(".key");
+
+//Edit this to change keybinds
 const keyCodes = [
   "KeyA", "KeyW", "KeyS", "KeyE", "KeyD", "KeyF", "KeyT",
   "KeyG", "KeyY", "KeyH", "KeyU", "KeyJ", "KeyK", "KeyO",
   "KeyL", "KeyP", "Semicolon"
 ];
 
+//Collection of instruments, can add more
 const instruments = {
   kick: {
     duration: 0.5,
@@ -155,41 +158,15 @@ const instruments = {
   
 };
 
-function playInstrument(name, freq, startAt, length) {
-  const instrument = instruments[name];
-  if (!instrument) {
-    console.warn(`Instrument "${name}" not found`);
-    return;
-  }
-  if(instrument.holdable){
-    return instrument.play(freq, startAt, length);
-  }else{
-    instrument.play(freq, startAt);
-  }
-
-  
-}
-
 document.getElementById("recordBtn").addEventListener("click", () => {
-  if(midiList.length > 0){
-    
-  recorder.start();
-  recordingText.style.display = "block";
-
-  playAllTracks();
-  let latestNoteEndTime = getSongEnd();
-
-  const timeUntilStop = (latestNoteEndTime) * 1000; // extra buffer
-  setTimeout(() => {
-    recorder.stop();
-    recordingText.style.display = "none";
-  }, timeUntilStop);
-}
+  if (midiList.length > 0) {
+    recordAudio();
+   
+  }
 });
 
-
 document.getElementById("recordMidiBtn").addEventListener("click", () => {
-  RecordMidi();
+  recordMidi();
 });
 
 document.getElementById("stopMidiBtn").addEventListener("click", () => {
@@ -207,14 +184,11 @@ document.getElementById("playTracksBtn").addEventListener("click", () => {
 setup();
 
 function setup() {
-
   mainGainNode = audioContext.createGain();
   mainGainNode.connect(audioContext.destination);
-  mainGainNode.gain.value = 0.15;
+  mainGainNode.gain.value = 0.15; //change this to change main volume
 
-  for (let i = 0; i < 9; i++) {
-    oscList[i] = {};
-  }
+  //This code is for saving audio data
 
   dest = audioContext.createMediaStreamDestination();
   recorder = new MediaRecorder(dest.stream);
@@ -227,13 +201,11 @@ function setup() {
     const audioDiv = document.getElementById("audioDiv");
     audioDiv.style.display = "block";
 
-    // Create an audio element to play the recording
     const audio = document.createElement('audio');
     audio.controls = true;
     audio.src = url;
-    audioDiv.appendChild(audio); // Add it to the page
+    audioDiv.appendChild(audio); 
 
-    // Optional: still provide a download link
     const a = document.createElement('a');
     a.href = url;
     a.download = 'recording.webm';
@@ -256,21 +228,35 @@ function playAllTracks(){
   }
 }
 
+//holdable instruments are ones that can hold a note as opposed to drums
+function playInstrument(name, freq, startAt, length) {
+  const instrument = instruments[name];
+  if (!instrument) {
+    console.warn(`Instrument "${name}" not found`);
+    return;
+  }
+  //if instrument is holdable we need to return so we can add it to oscList and later stop it
+  if(instrument.holdable){
+    return instrument.play(freq, startAt, length);
+  }else{
+    instrument.play(freq, startAt);
+  }
+}
+
 function playMidiTone(freq, instrument, length = null, startAt = audioContext.currentTime, ) {
   let osc = playInstrument(instrument, freq, startAt, length); 
 
-  // Visual feedback
   const ele = document.querySelector("[data-frequency='" + freq + "']");
   if (ele) {
+    //code to show piano playing visually
+
     const now = audioContext.currentTime;
-    const delay = (startAt - now) * 1000; // convert to ms
+    const delay = (startAt - now) * 1000;
     const duration = length * 1000;
     if(delay > 0){
-    // Add "playing" class at the right time
     setTimeout(() => {
       ele.classList.add("playing");
 
-      // Remove it after the note finishes
       setTimeout(() => {
         ele.classList.remove("playing");
       }, duration);
@@ -282,6 +268,7 @@ function playMidiTone(freq, instrument, length = null, startAt = audioContext.cu
 
 
 // EVENT LISTENER FUNCTIONS
+
 function notePressed(target) {
   const dataset = target.dataset;
   const type = instrumentSelect.options[instrumentSelect.selectedIndex].value;
@@ -295,11 +282,11 @@ function notePressed(target) {
       }
       dataset["pressed"] = "yes";
     if (recordingMidi) {
+      //need this so we know when the note started for the midi data
       noteStartTimes[frequency] = audioContext.currentTime - recordingStartTime;
     }
   }
 }
-
 
 function noteReleased(target) {
   const dataset = target.dataset;
@@ -314,6 +301,7 @@ function noteReleased(target) {
     delete dataset["pressed"];
   }
 
+  //If recording, creates a new midi event and adds it to midiEvents
   if (recordingMidi && noteStartTimes[frequency] !== undefined) {
     const start = noteStartTimes[frequency];
     const end = audioContext.currentTime - recordingStartTime;
@@ -324,7 +312,7 @@ function noteReleased(target) {
       length: length
     });
 
-    delete noteStartTimes[frequency]; // Clean up
+    delete noteStartTimes[frequency]; 
   }
 
 }
@@ -351,13 +339,13 @@ function playMidi(midi, instrument, startTime = audioContext.currentTime) {
   });
 }
 
-function RecordMidi() {
+function recordMidi() {
+  //there is a countdown for 3 seconds until recording starts
 
-  
   const countInDisplay = document.getElementById("count-in");
   const countdownSeconds = 3;
-  let counter = countdownSeconds;
 
+  let counter = countdownSeconds;
   countInDisplay.textContent = counter;
 
   const interval = setInterval(() => {
@@ -377,13 +365,27 @@ function RecordMidi() {
   }, 1000);
 }
 
+//We record audio by playing the midi tracks while recording
+function recordAudio(){
+  recorder.start();
+  recordingText.style.display = "block";
+
+  playAllTracks();
+  let latestNoteEndTime = getSongEnd(); //so we know when the recording stops
+
+  const timeUntilStop = (latestNoteEndTime) * 1000; //1000 ms buffer
+  setTimeout(() => {
+    recorder.stop();
+    recordingText.style.display = "none";
+  }, timeUntilStop);
+}
 
 function createNewTrack() {
   const trackElem = document.createElement("div");
   const count = tracksDiv.children.length
   trackElem.classList.add("track");
 
-  // Track name
+  // Track name, starts off as untitled+count
   const nameSpan = document.createElement("p");
   nameSpan.classList.add("name");
   nameSpan.contentEditable = true;
@@ -393,7 +395,6 @@ function createNewTrack() {
   // Instrument selector
   const select = instrumentSelect.cloneNode(true);
   select.value = instrumentSelect.value;
-
   trackElem.appendChild(select);
 
   // Playbutton
@@ -401,22 +402,18 @@ function createNewTrack() {
   playButton.textContent = "Play";
   playButton.addEventListener("click", () => {
     playMidi(midiList[count], select.value);
-   
   });
   trackElem.appendChild(playButton);
 
   // Mute button
   const muteButton = document.createElement("button");
   muteButton.textContent = "Mute";
-
   muteButton.addEventListener("click", () => {
     mutedTracks[count] = !mutedTracks[count];
     mutedTracks[count] ? muteButton.style.backgroundColor = "red" :  muteButton.style.backgroundColor = "#4CAF50"; 
   });
-
   trackElem.appendChild(muteButton);
 
-  // Append to main container
   tracksDiv.appendChild(trackElem);
   mutedTracks.push(false);
 }
